@@ -1,0 +1,15 @@
+{
+  "name": "starry-mobile-space",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
+  },
+  "dependencies": {
+    "expo": "~51.0.0",
+    "expo-av": "~14.0.0",
+    "react": "18.2.0",
+    "react-native": "0.74.3"
+  }
+}
