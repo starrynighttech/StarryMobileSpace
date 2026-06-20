@@ -3,12 +3,31 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 
 const User = require("../models/User")
+const Wallet = require("../models/Wallet")
+
+function generateReferralCode() {
+  return (
+    "SMS" +
+    Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase()
+  )
+}
 
 router.post("/register", async (req, res) => {
-  try {
-    const { fullName, email, password } = req.body
 
-    const existing = await User.findOne({ email })
+  try {
+
+    const {
+      fullName,
+      email,
+      password,
+      referredBy
+    } = req.body
+
+    const existing =
+      await User.findOne({ email })
 
     if (existing) {
       return res.status(400).json({
@@ -19,37 +38,60 @@ router.post("/register", async (req, res) => {
     const hashedPassword =
       await bcrypt.hash(password, 10)
 
-    const user = await User.create({
-      fullName,
-      email,
-      password: hashedPassword,
-      referralCode:
-        Math.random()
-          .toString(36)
-          .substring(2, 8)
-          .toUpperCase()
+    const user =
+      await User.create({
+        fullName,
+        email,
+        password: hashedPassword,
+        referralCode:
+          generateReferralCode(),
+        referredBy
+      })
+
+    await Wallet.create({
+      userId: user._id,
+      balance: 0
     })
 
-    res.json(user)
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d"
+      }
+    )
+
+    res.status(201).json({
+      token,
+      user
+    })
 
   } catch (err) {
+
     res.status(500).json({
       message: err.message
     })
+
   }
 })
 
 router.post("/login", async (req, res) => {
+
   try {
 
-    const { email, password } = req.body
+    const { email, password } =
+      req.body
 
     const user =
       await User.findOne({ email })
 
     if (!user) {
       return res.status(400).json({
-        message: "Invalid credentials"
+        message:
+        "Invalid credentials"
       })
     }
 
@@ -61,7 +103,8 @@ router.post("/login", async (req, res) => {
 
     if (!valid) {
       return res.status(400).json({
-        message: "Invalid credentials"
+        message:
+        "Invalid credentials"
       })
     }
 
@@ -82,9 +125,11 @@ router.post("/login", async (req, res) => {
     })
 
   } catch (err) {
+
     res.status(500).json({
       message: err.message
     })
+
   }
 })
 
