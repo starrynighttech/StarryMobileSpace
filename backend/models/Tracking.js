@@ -1,20 +1,32 @@
 const mongoose = require("mongoose")
 
-const TrackingSchema = new mongoose.Schema({
+const TrackingSchema =
+new mongoose.Schema({
 
-  internalCode:String,
+  internalCode:{
+    type:String,
+    unique:true
+  },
 
   courierCode:String,
 
-  status:String,
+  orderId:String,
 
-  location:String
+  status:{
+    type:String,
+    default:"Processing"
+  },
+
+  currentLocation:String,
+
+  estimatedDelivery:Date
 
 },{
   timestamps:true
 })
 
-module.exports = mongoose.model(
+module.exports =
+mongoose.model(
   "Tracking",
   TrackingSchema
 )
