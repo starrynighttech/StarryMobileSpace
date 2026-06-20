@@ -1,14 +1,25 @@
-function validateReward(
-  amount
+const FraudEvent =
+require("../models/FraudEvent")
+
+async function flagFraud(
+  userId,
+  reason
 ){
 
-  if(amount > 50){
-    return false
-  }
+  await FraudEvent.create({
 
-  return true
+    userId,
+
+    type:"fraud",
+
+    severity:"high",
+
+    description:reason
+
+  })
+
 }
 
 module.exports = {
-  validateReward
+  flagFraud
 }
