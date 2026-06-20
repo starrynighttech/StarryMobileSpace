@@ -1,11 +1,24 @@
 const router = require("express").Router()
 
-const Order = require("../models/Order")
+const Order =
+require("../models/Order")
+
+const generateTracking =
+require("../utils/generateTracking")
 
 router.post("/", async(req,res)=>{
 
+  const trackingCode =
+  generateTracking()
+
   const order =
-  await Order.create(req.body)
+  await Order.create({
+
+    ...req.body,
+
+    trackingCode
+
+  })
 
   res.json(order)
 
@@ -14,7 +27,9 @@ router.post("/", async(req,res)=>{
 router.get("/:id", async(req,res)=>{
 
   const order =
-  await Order.findById(req.params.id)
+  await Order.findById(
+    req.params.id
+  )
 
   res.json(order)
 
