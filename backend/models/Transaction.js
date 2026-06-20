@@ -1,20 +1,38 @@
 const mongoose = require("mongoose")
 
-const TransactionSchema = new mongoose.Schema({
+const TransactionSchema =
+new mongoose.Schema({
 
-  userId:String,
+  userId:{
+    type:String,
+    required:true
+  },
 
-  type:String,
+  type:{
+    type:String,
+    enum:[
+      "deposit",
+      "withdrawal",
+      "reward",
+      "purchase"
+    ]
+  },
 
   amount:Number,
 
-  description:String
+  reference:String,
+
+  status:{
+    type:String,
+    default:"completed"
+  }
 
 },{
   timestamps:true
 })
 
-module.exports = mongoose.model(
+module.exports =
+mongoose.model(
   "Transaction",
   TransactionSchema
 )
